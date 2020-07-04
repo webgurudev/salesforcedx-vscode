@@ -19,7 +19,7 @@ import {
   CompositeParametersGatherer,
   SfdxCommandlet
 } from '../../../../src/commands/util';
-import { LibraryCommandletExecutor } from '../../../../src/commands/util/libraryCommandlet';
+import { LibraryCommandletExecutor } from '../../../../src/commands/util';
 import { nls } from '../../../../src/messages';
 import { OrgAuthInfo } from '../../../../src/util';
 

@@ -13,31 +13,23 @@ import {
   ContinueResponse,
   ParametersGatherer
 } from '@salesforce/salesforcedx-utils-vscode/out/src/types';
-import {
-  RegistryAccess,
-  registryData
-} from '@salesforce/source-deploy-retrieve';
-import * as path from 'path';
+import { RegistryAccess } from '@salesforce/source-deploy-retrieve';
 import * as vscode from 'vscode';
 import { channelService } from '../channels';
 import { nls } from '../messages';
 import { notificationService } from '../notifications';
-import { DeployQueue, sfdxCoreSettings } from '../settings';
+import { DeployQueue } from '../settings';
 import { telemetryService } from '../telemetry';
 import { BaseDeployExecutor, DeployType } from './baseDeployCommand';
 import { SourcePathChecker } from './forceSourceRetrieveSourcePath';
 import {
-  APEX_CLASS_EXTENSION,
-  APEX_TRIGGER_EXTENSION,
-  VISUALFORCE_COMPONENT_EXTENSION,
-  VISUALFORCE_PAGE_EXTENSION
-} from './templates/metadataTypeConstants';
-import { FilePathGatherer, SfdxCommandlet, SfdxWorkspaceChecker } from './util';
-import {
   createComponentCount,
+  FilePathGatherer,
+  LibraryCommandletExecutor,
+  SfdxCommandlet,
+  SfdxWorkspaceChecker,
   useBetaDeployRetrieve
-} from './util/betaDeployRetrieve';
-import { LibraryCommandletExecutor } from './util/libraryCommandlet';
+} from './util';
 
 export class ForceSourceDeploySourcePathExecutor extends BaseDeployExecutor {
   public build(sourcePath: string): Command {

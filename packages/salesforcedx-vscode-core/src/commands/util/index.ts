@@ -39,3 +39,10 @@ export {
   DevUsernameChecker,
   EmptyPreChecker
 } from './preconditionCheckers';
+export { LibraryCommandletExecutor } from './libraryCommandlet';
+export {
+  createComponentCount,
+  useBetaDeployRetrieve
+} from './betaDeployRetrieve';
+export { LibraryDeployResultParser } from './libraryDeployResultParser';
+export { outputRetrieveTable } from './retrieveParser';

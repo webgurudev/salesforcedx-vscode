@@ -14,28 +14,22 @@ import {
   CancelResponse,
   ContinueResponse
 } from '@salesforce/salesforcedx-utils-vscode/out/src/types/index';
-import {
-  RegistryAccess,
-  registryData
-} from '@salesforce/source-deploy-retrieve';
+import { RegistryAccess } from '@salesforce/source-deploy-retrieve';
 import * as vscode from 'vscode';
 import { channelService } from '../channels';
 import { nls } from '../messages';
 import { notificationService } from '../notifications';
-import { sfdxCoreSettings } from '../settings';
 import { SfdxPackageDirectories } from '../sfdxProject';
 import { telemetryService } from '../telemetry';
 import {
+  createComponentCount,
   FilePathGatherer,
+  LibraryCommandletExecutor,
   SfdxCommandlet,
   SfdxCommandletExecutor,
-  SfdxWorkspaceChecker
-} from './util';
-import {
-  createComponentCount,
+  SfdxWorkspaceChecker,
   useBetaDeployRetrieve
-} from './util/betaDeployRetrieve';
-import { LibraryCommandletExecutor } from './util/libraryCommandlet';
+} from './util';
 
 export class ForceSourceRetrieveSourcePathExecutor extends SfdxCommandletExecutor<
   string
