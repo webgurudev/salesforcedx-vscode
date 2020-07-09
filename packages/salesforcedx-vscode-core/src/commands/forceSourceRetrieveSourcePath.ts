@@ -26,6 +26,7 @@ import { sfdxCoreSettings } from '../settings';
 import { SfdxPackageDirectories } from '../sfdxProject';
 import { telemetryService } from '../telemetry';
 import {
+  DeployRetrieveLibraryExecutor,
   FilePathGatherer,
   SfdxCommandlet,
   SfdxCommandletExecutor,
@@ -35,7 +36,7 @@ import {
   createComponentCount,
   useBetaDeployRetrieve
 } from './util/betaDeployRetrieve';
-import { LibraryCommandletExecutor } from './util/libraryCommandlet';
+// import { LibraryCommandletExecutor } from './util/libraryCommandlet';
 
 export class ForceSourceRetrieveSourcePathExecutor extends SfdxCommandletExecutor<
   string
@@ -116,9 +117,7 @@ export async function forceSourceRetrieveSourcePath(explorerPath: vscode.Uri) {
   await commandlet.run();
 }
 
-export class LibraryRetrieveSourcePathExecutor extends LibraryCommandletExecutor<
-  string
-> {
+export class LibraryRetrieveSourcePathExecutor extends DeployRetrieveLibraryExecutor {
   public async execute(response: ContinueResponse<string>): Promise<void> {
     this.setStartTime();
 

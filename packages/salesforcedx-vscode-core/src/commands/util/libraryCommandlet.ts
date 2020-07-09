@@ -6,119 +6,119 @@
  */
 
 import { ContinueResponse } from '@salesforce/salesforcedx-utils-vscode/out/src/types';
-import {
-  ApiResult,
-  DeployResult,
-  DeployStatusEnum,
-  SourceClient
-} from '@salesforce/source-deploy-retrieve';
-import { languages, ProgressLocation, window } from 'vscode';
-import { channelService } from '../../channels';
-import { handleLibraryDiagnostics } from '../../diagnostics/diagnostics';
-import { nls } from '../../messages';
-import { notificationService } from '../../notifications';
+// import {
+//   ApiResult,
+//   DeployResult,
+//   DeployStatusEnum,
+//   SourceClient
+// } from '@salesforce/source-deploy-retrieve';
+// import { languages, ProgressLocation, window } from 'vscode';
+// import { channelService } from '../../channels';
+// import { handleLibraryDiagnostics } from '../../diagnostics/diagnostics';
+// import { nls } from '../../messages';
+// import { notificationService } from '../../notifications';
 import {
   Measurements,
   Properties,
   TelemetryData,
   telemetryService
 } from '../../telemetry';
-import { OrgAuthInfo } from '../../util';
-import { LibraryDeployResultParser } from './libraryDeployResultParser';
-import { outputRetrieveTable } from './retrieveParser';
+// import { OrgAuthInfo } from '../../util';
+// import { LibraryDeployResultParser } from './libraryDeployResultParser';
+// import { outputRetrieveTable } from './retrieveParser';
 import { CommandletExecutor } from './sfdxCommandlet';
 
 export abstract class LibraryCommandletExecutor<T>
   implements CommandletExecutor<T> {
-  public static errorCollection = languages.createDiagnosticCollection(
-    'deploy-errors'
-  );
+  // public static errorCollection = languages.createDiagnosticCollection(
+  //   'deploy-errors'
+  // );
   protected showChannelOutput = true;
-  protected sourceClient: SourceClient | undefined;
+  // protected sourceClient: SourceClient | undefined;
   protected executionName: string = '';
   protected startTime: [number, number] | undefined;
   protected telemetryName: string | undefined;
 
-  public execute(response: ContinueResponse<T>): void {}
-
   public async build(
-    execName: string,
-    telemetryLogName: string
+    executionName: string,
+    telemetryName: string
   ): Promise<void> {
-    this.executionName = execName;
-    this.telemetryName = telemetryLogName;
-    // initialize connection
-    const usernameOrAlias = await OrgAuthInfo.getDefaultUsernameOrAlias(true);
-    if (!usernameOrAlias) {
-      throw new Error(nls.localize('error_no_default_username'));
-    }
-    const conn = await OrgAuthInfo.getConnection(usernameOrAlias);
-    // @ts-ignore private logger mismatch
-    this.sourceClient = new SourceClient(conn);
+    // this.executionName = executionName;
+    // this.telemetryName = telemetryLogName;
+    // // initialize connection
+    // const usernameOrAlias = await OrgAuthInfo.getDefaultUsernameOrAlias(true);
+    // if (!usernameOrAlias) {
+    //   throw new Error(nls.localize('error_no_default_username'));
+    // }
+    // const conn = await OrgAuthInfo.getConnection(usernameOrAlias);
+    // // @ts-ignore private logger mismatch
+    // this.sourceClient = new SourceClient(conn);
   }
 
-  public retrieveWrapper(fn: (...args: any[]) => Promise<ApiResult>) {
-    const commandName = this.executionName;
+  public async execute(response: ContinueResponse<T>): Promise<void> {}
 
-    return async function(...args: any[]): Promise<ApiResult> {
-      channelService.showCommandWithTimestamp(`Starting ${commandName}`);
+  // public retrieveWrapper(fn: (...args: any[]) => Promise<ApiResult>) {
+  //   const commandName = this.executionName;
 
-      const result = await window.withProgress(
-        {
-          title: commandName,
-          location: ProgressLocation.Notification
-        },
-        async () => {
-          // @ts-ignore
-          return (await fn.call(this, ...args)) as ApiResult;
-        }
-      );
+  //   return async function(...args: any[]): Promise<ApiResult> {
+  //     channelService.showCommandWithTimestamp(`Starting ${commandName}`);
 
-      channelService.appendLine(outputRetrieveTable(result));
-      channelService.showCommandWithTimestamp(`Finished ${commandName}`);
-      await notificationService.showSuccessfulExecution(commandName);
-      return result;
-    };
-  }
+  //     const result = await window.withProgress(
+  //       {
+  //         title: commandName,
+  //         location: ProgressLocation.Notification
+  //       },
+  //       async () => {
+  //         // @ts-ignore
+  //         return (await fn.call(this, ...args)) as ApiResult;
+  //       }
+  //     );
 
-  public deployWrapper(fn: (...args: any[]) => Promise<DeployResult>) {
-    const commandName = this.executionName;
+  //     channelService.appendLine(outputRetrieveTable(result));
+  //     channelService.showCommandWithTimestamp(`Finished ${commandName}`);
+  //     await notificationService.showSuccessfulExecution(commandName);
+  //     return result;
+  //   };
+  // }
 
-    return async function(...args: any[]): Promise<DeployResult> {
-      channelService.showCommandWithTimestamp(`Starting ${commandName}`);
+  // public deployWrapper(fn: (...args: any[]) => Promise<DeployResult>) {
+  //   const commandName = this.executionName;
 
-      const result = await window.withProgress(
-        {
-          title: commandName,
-          location: ProgressLocation.Notification
-        },
-        async () => {
-          // @ts-ignore
-          return (await fn.call(this, ...args)) as DeployResult;
-        }
-      );
+  //   return async function(...args: any[]): Promise<DeployResult> {
+  //     channelService.showCommandWithTimestamp(`Starting ${commandName}`);
 
-      const parser = new LibraryDeployResultParser(result);
-      const outputResult = await parser.outputResult();
-      channelService.appendLine(outputResult);
-      channelService.showCommandWithTimestamp(`Finished ${commandName}`);
+  //     const result = await window.withProgress(
+  //       {
+  //         title: commandName,
+  //         location: ProgressLocation.Notification
+  //       },
+  //       async () => {
+  //         // @ts-ignore
+  //         return (await fn.call(this, ...args)) as DeployResult;
+  //       }
+  //     );
 
-      if (
-        result.State === DeployStatusEnum.Completed ||
-        result.State === DeployStatusEnum.Queued
-      ) {
-        LibraryCommandletExecutor.errorCollection.clear();
-        await notificationService.showSuccessfulExecution(commandName);
-      } else {
-        handleLibraryDiagnostics(
-          result,
-          LibraryCommandletExecutor.errorCollection
-        );
-        notificationService.showFailedExecution(commandName);
-      }
-      return result;
-    };
-  }
+  //     const parser = new LibraryDeployResultParser(result);
+  //     const outputResult = await parser.outputResult();
+  //     channelService.appendLine(outputResult);
+  //     channelService.showCommandWithTimestamp(`Finished ${commandName}`);
+
+  //     if (
+  //       result.State === DeployStatusEnum.Completed ||
+  //       result.State === DeployStatusEnum.Queued
+  //     ) {
+  //       LibraryCommandletExecutor.errorCollection.clear();
+  //       await notificationService.showSuccessfulExecution(commandName);
+  //     } else {
+  //       handleLibraryDiagnostics(
+  //         result,
+  //         LibraryCommandletExecutor.errorCollection
+  //       );
+  //       notificationService.showFailedExecution(commandName);
+  //     }
+  //     return result;
+  //   };
+  // }
 
   public logMetric(properties?: Properties, measurements?: Measurements) {
     telemetryService.sendCommandEvent(
